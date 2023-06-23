@@ -1,3 +1,4 @@
+﻿
 $startTime=Get-Date
 Write-Host "Beginning deployment at $starttime"
 
@@ -6,30 +7,30 @@ $version = 0;
 
 #DEPLOYMENT OPTIONS
 #Please review the azuredeploy.bicep file for available options
-$RGName        = "<YOUR RESOURCE GROUP>"
-$DeployRegion  = "<SELECT AZURE REGION>"
+$RGName        = "rg-redcapbicep41"
+$DeployRegion  = "eastus"
 
 $parms = @{
 
     #Alternative to the zip file above, you can use REDCap Community credentials to download the zip file.
-    "redcapCommunityUsername"     = "<REDCap Community site username>";
-    "redcapCommunityPassword"     = "<REDCap Community site password>";
-    "redcapAppZipVersion"         = "<REDCap version";
+    "redcapCommunityUsername"     = "rcuser";
+    "redcapCommunityPassword"     = "pass@word";
+    "redcapAppZipVersion"         = "version1";
 
     #Mail settings
-    "fromEmailAddress"            = "<email address listed as sender for outbound emails>";
-    "smtpFQDN"                    = "<what it says>"
-    "smtpUser"                    = "<login name for smtp auth>"
-    "smtpPassword"                = "<password for smtp auth>"
+    "fromEmailAddress"            = "m@m.com";
+    "smtpFQDN"                    = "smtpfqdn"
+    "smtpUser"                    = "smtpuser"
+    "smtpPassword"                = "smtpuserpass@word"
 
     #Azure Web App
-    "siteName"                    = "<WEB SITE NAME, like 'redcap'>";
+    "siteName"                    = "rcsite";
     "skuName"                     = "S1";
     "skuCapacity"                 = 1;
 
     #MySQL
-    "administratorLogin"          = "<MySQL admin account name>";
-    "administratorLoginPassword"  = "<MySQL admin login password>";
+    "administratorLogin"          = "sqladmin";
+    "administratorLoginPassword"  = "sqladminpass@word";
 
     # "databaseForMySqlCores"       = 2;
     # "databaseForMySqlFamily"      = "Gen5";
@@ -46,13 +47,13 @@ $parms = @{
     "branch"                      = "master";
 
     #AVD session hosts
-    "vmAdminUserName"             = "<vm admin user name>"
-    "vmAdminPassword"             = "<vm admin password>"
+    "vmAdminUserName"             = "vmvmadmin"
+    "vmAdminPassword"             = "vmPass@word1234"
 
     #Domain join
-    "domainJoinUsername"          = "<domain join user name>"
-    "domainJoinPassword"          = "<domain join password>"
-    "adDomainFqdn"                = "<AD Domain FQDN>"
+    "domainJoinUsername"          = "domainuser"
+    "domainJoinPassword"          = "domainpass@word"
+    "adDomainFqdn"                = "adFQDN"
 
 
 }
