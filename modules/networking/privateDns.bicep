@@ -16,7 +16,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' existing = {
 }
 
 resource vnetLinks 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' =  [for (privateDns,i) in privateDnsZonesArray: {
-  name: take(replace(deploymentNameStructure, '{rtype}', 'dns-$(privateDns.key)'), 64)
+  name: take(replace(deploymentNameStructure, '{rtype}', 'dns-${privateDns.key}'), 64)
   location: 'global'
   parent: privateDnsZonesRes[i]
   properties: {

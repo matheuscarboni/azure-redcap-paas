@@ -6,6 +6,8 @@ param location string = resourceGroup().location
 param sequence int = 1
 
 param baseTime string = utcNow('u')
+@description('Name of the virtual network to be created. If blank, the name will be generated from the namingStructure parameter.')
+param vNetName string = ''
 
 @description('Name of azure web app')
 param siteName string
@@ -137,6 +139,7 @@ param adDomainFqdn string
 param adOuPath string = ''
 
 // Optional parameters
+var virtualNetworkName = !empty(vNetName) ? vNetName : replace(namingStructure, '{rtype}', 'vnet')
 param tags object = {}
 var deploymentNameStructure = '${workloadName}-${environment}-{rtype}-${deploymentTime}'
 var sequenceFormatted = format('{0:00}', sequence)
@@ -228,6 +231,28 @@ var subnetsToDeploy = {
     // Omit the routes property here
     // routes: []
   }
+  MySqlSubnet: {
+    addressPrefix: '${replace(vnetAddressPrefix, '{octet3}', '3')}/${subnetCidr}'
+    serviceEndpoints: [
+      {
+        service: 'Microsoft.Storage'
+        locations: [
+          location
+        ]
+      }
+      {
+        service: 'Microsoft.KeyVault'
+        locations: [
+          location
+        ]
+      }
+    ]
+    // Specify an empty array of security rules. Network security group for this subnet will be created, but only contain default rules.
+    securityRules: []
+    delegation: 'Microsoft.DBforMySQL/flexibleServers'
+    // Create an empty route table
+    routes: []
+  }
   PrivateLinkSubnet: {
     addressPrefix: '${replace(vnetAddressPrefix, '{octet3}', '2')}/${subnetCidr}'
     serviceEndpoints: [
@@ -248,28 +273,6 @@ var subnetsToDeploy = {
     securityRules: []
     // Omit the delegation property here
     //delegation: ''
-    // Create an empty route table
-    routes: []
-  }
-  MySqlSubnet: {
-    addressPrefix: '${replace(vnetAddressPrefix, '{octet3}', '3')}/${subnetCidr}'
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.Storage'
-        locations: [
-          location
-        ]
-      }
-      {
-        service: 'Microsoft.KeyVault'
-        locations: [
-          location
-        ]
-      }
-    ]
-    // Specify an empty array of security rules. Network security group for this subnet will be created, but only contain default rules.
-    securityRules: []
-    delegation: 'Microsoft.DBforMySQL/flexibleServers'
     // Create an empty route table
     routes: []
   }
@@ -308,6 +311,7 @@ module networkModule 'modules/networking/network.bicep' = {
   name: take(replace(deploymentNameStructure, '{rtype}', 'network'), 64)
   scope: resourceGroup()
   params: {
+    vnetName: virtualNetworkName
     deploymentNameStructure: deploymentNameStructure
     namingStructure: namingStructure
     location: location
@@ -319,13 +323,21 @@ module networkModule 'modules/networking/network.bicep' = {
 }
 
 module storageModule 'modules/storage/storage.bicep' = {
-  name: take(replace(deploymentNameStructure, '{rtype}', 'network'), 64)
+  name: take(replace(deploymentNameStructure, '{rtype}', 'storage'), 64)
   scope: resourceGroup()
   params: {
     deploymentNameStructure: deploymentNameStructure
     location: location
     tags: tags
+    subnetDefs: subnetsToDeploy
+    storageContainerName: storageContainerName
+    storageType: storageType
+    uniqueStorageName: uniqueStorageName
+    privateDnsZones: privateDnsZones
   }
+  dependsOn:[
+    networkModule
+  ]
 }
 
 // 

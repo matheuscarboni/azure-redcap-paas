@@ -1,7 +1,5 @@
-@description('Name of the virtual network to be created. If blank, the name will be generated from the namingStructure parameter.')
-param vNetName string = ''
 param location string
-
+param vnetName string
 /*
   Object Schema
   subnet-name: {
@@ -38,7 +36,6 @@ param remoteVNetFriendlyName string = ''
 @description('Optional even when peering. Only used when peering to create the name of the peering. If blank, the peering name will use the VNet name.')
 param vnetFriendlyName string = ''
 
-var virtualNetworkName = !empty(vNetName) ? vNetName : replace(namingStructure, '{rtype}', 'vnet')
 
 // Create a network security group for each subnet that requires one
 module networkSecurityModule 'networkSecurity.bicep' = {
@@ -75,7 +72,7 @@ module vNetModule 'vnet.bicep' = {
   params: {
     location: location
     subnetDefs: subnetDefs
-    vnetName: virtualNetworkName
+    vnetName: vnetName
     vnetAddressPrefix: vnetAddressPrefix
     networkSecurityGroups: nsgIds
     routeTables: routeTableIds
@@ -89,7 +86,7 @@ module privateDnsModule 'privateDns.bicep' = {
   params: {
     deploymentNameStructure: deploymentNameStructure
     privateDnsZones: privateDnsZones
-    vnetName: virtualNetworkName
+    vnetName: vnetName
   }
   dependsOn: [
     vNetModule
