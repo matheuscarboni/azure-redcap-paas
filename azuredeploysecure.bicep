@@ -185,6 +185,12 @@ var subnetsToDeploy = {
           location
         ]
       }
+      {
+        service: 'Microsoft.Web'
+        locations: [
+          location
+        ]
+      }
     ]
     // Specify an empty array of security rules. Network security group for this subnet will be created, but only contain default rules.
     securityRules: []
@@ -204,6 +210,12 @@ var subnetsToDeploy = {
       }
       {
         service: 'Microsoft.KeyVault'
+        locations: [
+          location
+        ]
+      }
+      {
+        service: 'Microsoft.Web'
         locations: [
           location
         ]

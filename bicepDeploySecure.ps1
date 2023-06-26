@@ -71,7 +71,7 @@ catch {
     Write-Host "Created new resource group $RGName."
 }
 $version ++
-$deployment = New-AzResourceGroupDeployment -ResourceGroupName $RGName -TemplateParameterObject $parms -TemplateFile ".\azuredeploy.bicep" -Name "RedCAPDeploy$version"  -Force -Verbose
+$deployment = New-AzResourceGroupDeployment -ResourceGroupName $RGName -TemplateParameterObject $parms -TemplateFile ".\azuredeploysecure.bicep" -Name "RedCAPDeploy$version"  -Force -Verbose
 
 if ($deployment.ProvisioningState -eq "Succeeded") {
     $siteName = $deployment.Outputs.webSiteFQDN.Value
