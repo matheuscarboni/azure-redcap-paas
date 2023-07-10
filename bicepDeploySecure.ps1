@@ -1,5 +1,5 @@
-﻿
 $startTime=Get-Date
+
 Write-Host "Beginning deployment at $starttime"
 
 Import-Module Azure -ErrorAction SilentlyContinue
